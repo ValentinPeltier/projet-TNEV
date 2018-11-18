@@ -1,10 +1,5 @@
 #include "robot.h"
 
-Button moveButton, shootButton;
-Motor motorLeft, motorRight;
-Servomotor servomotor;
-Ultrasonic ultrasonic;
-
 /*
 void Robot::foo() {
   Serial.println("I'm in foo");
