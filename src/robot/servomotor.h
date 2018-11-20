@@ -2,6 +2,7 @@
 #define SERVOMOTOR_H
 
 #include <Servo.h>
+#include "consts.h"
 
 class Servomotor {
 public:

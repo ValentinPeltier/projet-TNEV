@@ -34,8 +34,6 @@ void Robot::init() {
 }
 
 void Robot::loop() {
-  servomotor.setValue(0);
-
   // Wait until move button is pressed
   while(!moveButton.click());
 
@@ -45,9 +43,10 @@ void Robot::loop() {
 
   float distance = ultrasonic.getDistance();
 
+  // Go forward until distance < 20cm
   while(distance > 20.0f) {
     delay(10);
-    
+
     servoAngle += servoDirection * 0.5f;
 
     if(abs(servoAngle) > 30.0f) {

@@ -21,6 +21,7 @@
 
 // Servomotor
 #define SERVOMOTOR_PIN 9
+#define SERVOMOTOR_ANGLE_SHIFT (-10)
 
 // Ultrasonic sensor
 #define ULTRASONIC_TRIGGER_PIN 12
