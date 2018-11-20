@@ -10,7 +10,8 @@ public:
 
 private:
   int pin;
-  bool state, lastState;
+  bool state = false;
+  bool lastState = false;
 };
 
 #endif

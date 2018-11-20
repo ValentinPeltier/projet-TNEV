@@ -9,19 +9,33 @@ void Ultrasonic::init(int triggerPin, int echoPin) {
 }
 
 float Ultrasonic::getDistance() {
-  digitalWrite(ULTRASONIC_TRIGGER_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(ULTRASONIC_TRIGGER_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(ULTRASONIC_TRIGGER_PIN, LOW);
+  // If last call is more than 60ms ago
+  if(millis() > lastTime + 60) {
+    // Calculate distance
+    digitalWrite(ULTRASONIC_TRIGGER_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(ULTRASONIC_TRIGGER_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(ULTRASONIC_TRIGGER_PIN, LOW);
 
-  long duration = pulseIn(ULTRASONIC_ECHO_PIN, HIGH);
+    unsigned long duration = pulseIn(ULTRASONIC_ECHO_PIN, HIGH);
 
-  float distance = duration / 2.0f / 29.1f;
+    float distance = duration / 2.0f / 29.1f;
 
-  if(distance <= 0.0f || distance >= 400.0f) {
-    return 0;
+    if(distance < 0.0f) {
+      distance = 0.0f;
+    }
+    if(distance >= 400.0f) {
+      distance = 400.0f;
+    }
+
+    lastTime = millis();
+    lastDistance = distance;
+
+    return distance;
   }
-
-  return distance;
+  else {
+    // Return last value
+    return lastDistance;
+  }
 }

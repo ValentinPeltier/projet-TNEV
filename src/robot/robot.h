@@ -24,7 +24,7 @@ private:
 	// -------
 
 	float servoAngle = 0.0f;
-	int servoDirection = 1.0f;
+	int servoDirection = 1;
 
 	Button moveButton, shootButton;
 	Motor motorLeft, motorRight;

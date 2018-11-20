@@ -46,16 +46,17 @@ void Robot::loop() {
   float distance = ultrasonic.getDistance();
 
   while(distance > 20.0f) {
-    servoAngle += servoDirection * (servoAngle + 0.1f);
+    delay(10);
+    
+    servoAngle += servoDirection * 0.5f;
 
-    if(abs(servoAngle) > 10.0f) {
+    if(abs(servoAngle) > 30.0f) {
       servoDirection = -servoDirection;
     }
 
     servomotor.setValue(servoAngle);
 
     distance = ultrasonic.getDistance();
-    Serial.println(distance);
   }
 
   motorLeft.set(forward, 0);

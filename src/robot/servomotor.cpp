@@ -5,7 +5,7 @@ void Servomotor::init(int pin) {
 }
 
 void Servomotor::setValue(int v) {
-  servo.write(v);
+  servo.write(90 + v);
 }
 
 int Servomotor::read() {

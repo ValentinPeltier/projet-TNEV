@@ -2,8 +2,6 @@
 
 void Button::init(int pin) {
   this->pin = pin;
-  this->lastState = false;
-  this->state = false;
 
   pinMode(pin, INPUT);
 }
