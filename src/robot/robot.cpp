@@ -12,6 +12,10 @@ while(actionManager.getCount() > 0) {
 }
 */
 
+void Robot::displayProgression(float p) {
+  Serial.println(p);
+}
+
 void Robot::init() {
   Serial.begin(9600);
 
@@ -57,9 +61,16 @@ void Robot::loop() {
 
     distance = ultrasonic.getDistance();
   }
-
+  
   motorLeft.set(forward, 0);
   motorRight.set(forward, 0);
+
+  // Start the curve around the bottle
+  actionManager.addAction(this, &Robot::displayProgression, 5000);
+
+  while(actionManager.getCount() > 0) {
+    actionManager.update();
+  }
 }
 
 void Robot::turn(int adeg) {

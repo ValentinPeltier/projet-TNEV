@@ -5,17 +5,18 @@
 
 class Robot;
 
-typedef void (Robot::*RobotActionFn)();
+typedef void (Robot::*RobotActionFn)(float);
 
 struct Action {
 	Robot *robot;
 	RobotActionFn func;
-	long int time;
+	long duration;
+	long startTime;
 };
 
 class ActionManager {
 public:
-	void addAction(Robot*, RobotActionFn, long int);
+	void addAction(Robot*, RobotActionFn, long);
 	void update();
 	int getCount();
 	

@@ -13,6 +13,7 @@
 
 class Robot {
 public:
+	void displayProgression(float);
 	void init();
 	void loop();
 
