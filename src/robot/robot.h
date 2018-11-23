@@ -8,12 +8,8 @@
 #include "ultrasonic.h"
 #include "actionManager.h"
 
-#define X 2300
-#define Y 2500
-
 class Robot {
 public:
-	void displayProgression(float);
 	void init();
 	void loop();
 
@@ -22,7 +18,11 @@ private:
 	void updateButtonState();
 	bool buttonStatePressed();
 
+	void turnRoutine(float);
+
 	// -------
+
+	float turnAngle = 0.0f;
 
 	float servoAngle = 0.0f;
 	int servoDirection = 1;

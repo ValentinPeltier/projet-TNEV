@@ -1,21 +1,5 @@
 #include "robot.h"
 
-/*
-void Robot::foo() {
-  Serial.println("I'm in foo");
-}
-
-actionManager.addAction(this, &Robot::foo, 1000);
-
-while(actionManager.getCount() > 0) {
-  actionManager.update();
-}
-*/
-
-void Robot::displayProgression(float p) {
-  Serial.println(p);
-}
-
 void Robot::init() {
   Serial.begin(9600);
 
@@ -47,11 +31,11 @@ void Robot::loop() {
 
   float distance = ultrasonic.getDistance();
 
-  // Go forward until distance < 20cm
+  // Go forward until distance < 30cm
   while(distance > 20.0f) {
     delay(10);
 
-    servoAngle += servoDirection * 0.5f;
+    servoAngle += servoDirection * 2.0f;
 
     if(abs(servoAngle) > 30.0f) {
       servoDirection = -servoDirection;
@@ -66,21 +50,56 @@ void Robot::loop() {
   motorRight.set(forward, 0);
 
   // Start the curve around the bottle
-  actionManager.addAction(this, &Robot::displayProgression, 5000);
-
+  
+  turn(45);
   while(actionManager.getCount() > 0) {
     actionManager.update();
   }
+
+  motorLeft.set(forward, 255);
+  motorRight.set(forward, 255);
+
+  delay(2000);
+
+  turn(-90);
+  while(actionManager.getCount() > 0) {
+    actionManager.update();
+  }
+
+  motorLeft.set(forward, 255);
+  motorRight.set(forward, 255);
+
+  delay(2000);
+
+  turn(45);
+  
+  while(actionManager.getCount() > 0) {
+    actionManager.update();
+  }
+
+  motorLeft.set(forward, 0);
+  motorRight.set(forward, 0);
+
+  servoAngle = 0.0f;
+  servoDirection = 1;
 }
 
 void Robot::turn(int adeg) {
   // Convert adeg from deg to rad
-  float angle = PI * adeg / 180.0f;
+  turnAngle = PI * adeg / 180.0f;
   
-  float l = abs(angle) * TRACK / 100.0f; // (Convert to m)
-  float t = l / (SPEED * 1.5f) * 1000; // (Convert to millis)
-    
-  if(angle > 0) {
+  float l = abs(turnAngle) * TRACK / 100.0f; // (Convert to m)
+  float t = l / (SPEED * 1.18125f) * 1000; // (Convert to millis)
+
+  actionManager.addAction(this, &Robot::turnRoutine, t);
+}
+
+void Robot::turnRoutine(float p) {
+  if(turnAngle == 0) {
+    return;
+  }
+
+  if(turnAngle > 0) {
     motorLeft.set(forward, 255);
     motorRight.set(backward, 255);
   }
@@ -88,9 +107,4 @@ void Robot::turn(int adeg) {
     motorLeft.set(backward, 255);
     motorRight.set(forward, 255);
   }
-
-  delay(t);
-
-  motorLeft.set(forward, 0);
-  motorRight.set(forward, 0);
 }
