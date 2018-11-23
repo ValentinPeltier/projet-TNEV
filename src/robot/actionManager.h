@@ -21,7 +21,7 @@ public:
 	int getCount();
 	
 private:
-	Action actions[100];
+	Action actions[25];
 	int actionCount = 0;
 };
 
