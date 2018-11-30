@@ -3,12 +3,15 @@
 
 // Constants
 #define PI 3.14159265f
-#define TRACK 16.5f
+#define TRACK 15.8f
 #define SPEED (3/10.0f)
 
-// Button
-#define BUTTON_MOVE_PIN 2
-#define BUTTON_SHOOT_PIN 3
+// Buttons
+#define BUTTON_MOVE_PIN A0
+#define BUTTON_SHOOT_PIN A1
+
+// IR receiver
+#define INFRARED_PIN 2
 
 // Motors
 #define MOTOR_L_CONTROL1_PIN 4

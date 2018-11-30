@@ -22,8 +22,55 @@ void Robot::init() {
 }
 
 void Robot::loop() {
+  const int RECV_PIN = 2;
+  IRrecv irrecv(RECV_PIN);
+  decode_results results;
+
+  irrecv.enableIRIn();
+  irrecv.blink13(true);
+
   // Wait until move button is pressed
-  while(!moveButton.click());
+  while(!moveButton.click()) {
+    // Remote
+    if (irrecv.decode(&results)) {
+      Serial.println(results.value);
+
+      if(results.value == 1282 || results.value == 3330 || results.value == 1333 || results.value == 3381) {
+        // Go forward
+        motorLeft.set(forward, 255);
+        motorRight.set(forward, 255);
+      }
+      else if(results.value == 1284 || results.value == 3332 || results.value == 1313 || results.value == 3361) {
+        // Turn left
+        motorLeft.set(backward, 255);
+        motorRight.set(forward, 255);
+      }
+      else if(results.value == 1286 || results.value == 3334 || results.value == 1312 || results.value == 3360) {
+        // Turn right
+        motorLeft.set(forward, 255);
+        motorRight.set(backward, 255);
+      }
+      else if(results.value == 1288 || results.value == 3336 || results.value == 1334 || results.value == 3382) {
+        // Go backward
+        motorLeft.set(backward, 255);
+        motorRight.set(backward, 255);
+      }
+      else {
+        // Stop
+        motorLeft.set(forward, 0);
+        motorRight.set(forward, 0);
+      }
+
+      irrecv.resume();
+
+      delay(100);
+    }
+    else {
+      // Stop
+      motorLeft.set(forward, 0);
+      motorRight.set(forward, 0);
+    }
+  }
 
   // Go forward
   motorLeft.set(forward, 255);

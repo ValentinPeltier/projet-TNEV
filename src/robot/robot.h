@@ -8,6 +8,8 @@
 #include "ultrasonic.h"
 #include "actionManager.h"
 
+#include <IRremote.h>
+
 class Robot {
 public:
 	void init();
