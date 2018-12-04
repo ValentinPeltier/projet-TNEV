@@ -8,7 +8,7 @@ class Servomotor {
 public:
   void init(int);
   void setValue(int);
-  int read();
+  int getValue();
   
 private:
   Servo servo;

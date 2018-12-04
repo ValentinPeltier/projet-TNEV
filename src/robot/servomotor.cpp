@@ -9,6 +9,6 @@ void Servomotor::setValue(int v) {
   servo.write(90 + SERVOMOTOR_ANGLE_SHIFT + v);
 }
 
-int Servomotor::read() {
-  return servo.read();
+int Servomotor::getValue() {
+  return servo.read() - 90 - SERVOMOTOR_ANGLE_SHIFT;
 }

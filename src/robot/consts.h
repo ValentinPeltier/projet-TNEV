@@ -4,7 +4,7 @@
 // Constants
 #define PI 3.14159265f
 #define TRACK 15.8f
-#define SPEED (3/10.0f)
+#define SPEED (0.44296875f)
 
 // Buttons
 #define BUTTON_MOVE_PIN A0
@@ -19,12 +19,12 @@
 #define MOTOR_R_CONTROL1_PIN 6
 #define MOTOR_R_CONTROL2_PIN 7
 
-#define MOTOR_L_SPEED_PIN 10
-#define MOTOR_R_SPEED_PIN 11
+#define MOTOR_R_SPEED_PIN 10
+#define MOTOR_L_SPEED_PIN 11
 
 // Servomotor
 #define SERVOMOTOR_PIN 9
-#define SERVOMOTOR_ANGLE_SHIFT (-10)
+#define SERVOMOTOR_ANGLE_SHIFT (-30)
 
 // Ultrasonic sensor
 #define ULTRASONIC_TRIGGER_PIN 12

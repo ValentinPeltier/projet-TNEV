@@ -6,7 +6,6 @@
 #include "motor.h"
 #include "servomotor.h"
 #include "ultrasonic.h"
-#include "actionManager.h"
 
 #include <IRremote.h>
 
@@ -20,21 +19,16 @@ private:
 	void updateButtonState();
 	bool buttonStatePressed();
 
-	void turnRoutine(float);
-
 	// -------
 
-	float turnAngle = 0.0f;
-
-	float servoAngle = 0.0f;
-	int servoDirection = 1;
+	float turnAngle;
+	float servoAngle;
+	int servoDirection;
 
 	Button moveButton, shootButton;
 	Motor motorLeft, motorRight;
 	Servomotor servomotor;
 	Ultrasonic ultrasonic;
-
-	ActionManager actionManager;
 };
 
 #endif
