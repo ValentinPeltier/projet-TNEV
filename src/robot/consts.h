@@ -6,9 +6,8 @@
 #define TRACK 15.8f
 #define SPEED (0.45f)
 
-// Buttons
-#define BUTTON_MOVE_PIN A0
-#define BUTTON_SHOOT_PIN A1
+// Button
+#define BUTTON_PIN 3
 
 // IR receiver
 #define INFRARED_PIN 2

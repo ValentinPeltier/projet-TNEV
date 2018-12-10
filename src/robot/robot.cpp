@@ -16,9 +16,8 @@ void Robot::init() {
   // Ultrasonic sensor
   ultrasonic.init(ULTRASONIC_TRIGGER_PIN, ULTRASONIC_ECHO_PIN);
 
-  // Buttons
-  moveButton.init(BUTTON_MOVE_PIN);
-  shootButton.init(BUTTON_SHOOT_PIN);
+  // Button
+  button.init(BUTTON_PIN);
 }
 
 void Robot::loop() {
@@ -35,7 +34,7 @@ void Robot::loop() {
 
   // Wait until move button is pressed
   while(!move) {
-    move = moveButton.click();
+    move = button.click();
 
     // Remote control
     if (irrecv.decode(&results)) {

@@ -24,7 +24,7 @@ private:
 	float servoAngle;
 	int servoDirection;
 
-	Button moveButton, shootButton;
+	Button button;
 	Motor motorLeft, motorRight;
 	Servomotor servomotor;
 	Ultrasonic ultrasonic;
