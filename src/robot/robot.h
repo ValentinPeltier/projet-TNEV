@@ -20,8 +20,7 @@ private:
 	bool buttonStatePressed();
 
 	// -------
-
-	float turnAngle;
+	
 	float servoAngle;
 	int servoDirection;
 

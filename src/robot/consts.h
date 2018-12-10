@@ -4,7 +4,7 @@
 // Constants
 #define PI 3.14159265f
 #define TRACK 15.8f
-#define SPEED (0.44296875f)
+#define SPEED (0.45f)
 
 // Buttons
 #define BUTTON_MOVE_PIN A0

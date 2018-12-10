@@ -11,11 +11,8 @@ void Motor::init(int speedPin, int control1Pin, int control2Pin) {
   pinMode(control1Pin, OUTPUT);
   pinMode(control2Pin, OUTPUT);
 
-  // Set speed to 0
-  setSpeed(0);
-
-  // Set direction to forward
-  setDirection(forward);
+  // Init
+  set(forward, 0);
 }
 
 void Motor::set(Direction direction, int speed) {

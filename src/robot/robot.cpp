@@ -31,29 +31,48 @@ void Robot::loop() {
   irrecv.enableIRIn();
   decode_results results;
 
+  bool move = false;
+
   // Wait until move button is pressed
-  while(!moveButton.click()) {
-    // Remote
+  while(!move) {
+    move = moveButton.click();
+
+    // Remote control
     if (irrecv.decode(&results)) {
+      Serial.print("Remote : ");
+      Serial.println(results.value);
+
+      // Forward
       if(results.value == 1282 || results.value == 3330 || results.value == 1333 || results.value == 3381) {
-        // Go forward
         motorLeft.set(forward, 255);
         motorRight.set(forward, 255);
       }
-      else if(results.value == 1284 || results.value == 3332 || results.value == 1313 || results.value == 3361) {
-        // Turn left
-        motorLeft.set(backward, 255);
-        motorRight.set(forward, 255);
-      }
-      else if(results.value == 1286 || results.value == 3334 || results.value == 1312 || results.value == 3360) {
-        // Turn right
-        motorLeft.set(forward, 255);
-        motorRight.set(backward, 255);
-      }
+      // Backward
       else if(results.value == 1288 || results.value == 3336 || results.value == 1334 || results.value == 3382) {
-        // Go backward
         motorLeft.set(backward, 255);
         motorRight.set(backward, 255);
+      }
+      // Turn left
+      else if(results.value == 1284 || results.value == 3332 || results.value == 1313 || results.value == 3361) {
+        motorLeft.set(backward, 255);
+        motorRight.set(forward, 255);
+      }
+      // Turn right
+      else if(results.value == 1286 || results.value == 3334 || results.value == 1312 || results.value == 3360) {
+        motorLeft.set(forward, 255);
+        motorRight.set(backward, 255);
+      }
+      // Turn 90deg left
+      else if(results.value == 1297 || results.value == 3345) {
+        turn(-90);
+      }
+      // Turn 90deg right
+      else if(results.value == 1296 || results.value == 3344) {
+        turn(90);
+      }
+      // Start moving
+      else if(results.value == 1325 || results.value == 3373) {
+        move = true;
       }
       else {
         // Stop
@@ -96,29 +115,31 @@ void Robot::loop() {
   motorLeft.set(forward, 0);
   motorRight.set(forward, 0);
 
-  // Start the "curve"
+  // Turn around the bottle
 
   servomotor.setValue(-90);
   turn(45);
-  motorLeft.set(forward, MOTOR_L_SPEED);
-  motorRight.set(forward, MOTOR_R_SPEED);
+  motorLeft.set(forward, 255);
+  motorRight.set(forward, 255);
   
+  // Go forward until we see the bottle
   while(ultrasonic.getDistance() > 30.0f);
 
+  // Continue until we pass the bottle (and a bit more)
   while(ultrasonic.getDistance() < 30.0f);
-
   delay(750);
 
   for(int i = 0; i < 4; i++) {
     servomotor.setValue((i%2?-1:1)*90);
     turn((i%2?1:-1)*90);
-    motorLeft.set(forward, MOTOR_L_SPEED);
-    motorRight.set(forward, MOTOR_R_SPEED);
+    motorLeft.set(forward, 255);
+    motorRight.set(forward, 255);
     
+    // Go forward until we see the bottle
     while(ultrasonic.getDistance() > 30.0f);
 
+    // Continue until we pass the bottle (and a bit more)
     while(ultrasonic.getDistance() < 30.0f);
-
     delay(750);
   }
 
@@ -129,7 +150,7 @@ void Robot::loop() {
 
 void Robot::turn(int adeg) {
   // Convert adeg from deg to rad
-  turnAngle = PI * adeg / 180.0f;
+  float turnAngle = PI * adeg / 180.0f;
   
   float l = abs(turnAngle) * TRACK / 100.0f; // (Convert to m)
   float t = l / SPEED * 1000; // (Convert to millis)
