@@ -12,8 +12,6 @@ class Motor {
 public:	
   void init(int, int, int);
   void set(Direction, int);
-
-private:
   void setSpeed(int);
   void setDirection(Direction);
   

@@ -7,9 +7,6 @@ void Robot::init() {
   motorLeft.init(MOTOR_L_SPEED_PIN, MOTOR_L_CONTROL1_PIN, MOTOR_L_CONTROL2_PIN);
   motorRight.init(MOTOR_R_SPEED_PIN, MOTOR_R_CONTROL1_PIN, MOTOR_R_CONTROL2_PIN);
 
-  motorLeft.set(forward, 0);
-  motorRight.set(forward, 0);
-
   // Servomotor
   servomotor.init(SERVOMOTOR_PIN);
 
@@ -21,57 +18,63 @@ void Robot::init() {
 }
 
 void Robot::loop() {
-  // Init
+  initValues();
+  waitForStart();
+  searchFirstBottle();
+  stop();
+  bypassBottles();
+  stop();
+}
+
+void Robot::initValues() {
   servoAngle = 0.0f;
   servoDirection = 1;
   servomotor.setValue(0);
+}
 
+void Robot::waitForStart() {
   IRrecv irrecv(INFRARED_PIN);
   irrecv.enableIRIn();
   decode_results results;
 
-  bool move = false;
+  bool start = false;
 
-  // Wait until move button is pressed
-  while(!move) {
-    move = button.click();
+  while(!start) {
+    start = button.click();
 
     // Remote control
     if (irrecv.decode(&results)) {
-      Serial.print("Remote : ");
-      Serial.println(results.value);
-
       // Forward
-      if(results.value == 1282 || results.value == 3330 || results.value == 1333 || results.value == 3381) {
+      if(results.value == 1282 || results.value == 3330 || results.value == 1333 || results.value == 3381) { // 2, top arrow
         motorLeft.set(forward, 255);
         motorRight.set(forward, 255);
       }
       // Backward
-      else if(results.value == 1288 || results.value == 3336 || results.value == 1334 || results.value == 3382) {
+      else if(results.value == 1288 || results.value == 3336 || results.value == 1334 || results.value == 3382) { // 8, bottom arrow
         motorLeft.set(backward, 255);
         motorRight.set(backward, 255);
       }
       // Turn left
-      else if(results.value == 1284 || results.value == 3332 || results.value == 1313 || results.value == 3361) {
+      else if(results.value == 1284 || results.value == 3332 || results.value == 1313 || results.value == 3361) { // 4, left arrow
         motorLeft.set(backward, 255);
         motorRight.set(forward, 255);
       }
       // Turn right
-      else if(results.value == 1286 || results.value == 3334 || results.value == 1312 || results.value == 3360) {
+      else if(results.value == 1286 || results.value == 3334 || results.value == 1312 || results.value == 3360) { // 6, right arrow
         motorLeft.set(forward, 255);
         motorRight.set(backward, 255);
       }
       // Turn 90deg left
-      else if(results.value == 1297 || results.value == 3345) {
+      else if(results.value == 1297 || results.value == 3345) { // - button
         turn(-90);
       }
       // Turn 90deg right
-      else if(results.value == 1296 || results.value == 3344) {
+      else if(results.value == 1296 || results.value == 3344) { // + button
         turn(90);
       }
       // Start moving
-      else if(results.value == 1325 || results.value == 3373) {
-        move = true;
+      else if(results.value == 1325 || results.value == 3373) { // Power button
+        start = true;
       }
       else {
         // Stop
@@ -79,6 +82,8 @@ void Robot::loop() {
         motorRight.set(forward, 0);
       }
 
+      Serial.print("Remote : ");
+      Serial.println(results.value);
       irrecv.resume();
 
       delay(100);
@@ -89,70 +94,75 @@ void Robot::loop() {
       motorRight.set(forward, 0);
     }
   }
+}
 
-  // Go forward
-  motorLeft.set(forward, 255);
-  motorRight.set(forward, 255);
+void Robot::searchFirstBottle() {
+  goForward();
 
   float distance = ultrasonic.getDistance();
 
-  // Go forward until distance < 25cm
-  while(distance > 25.0f) {
-    delay(10);
+  // Go forward until the bottle is near enough
+  while(distance > MAX_BOTTLE_DISTANCE) {
+    servoAngle += servoDirection * SERVOMOTOR_ROTATE_SPEED;
 
-    servoAngle += servoDirection * 2.5f;
-
-    if(abs(servoAngle) > 40.0f) {
+    if(abs(servoAngle) >= SERVOMOTOR_ROTATE_ANGLE) {
       servoDirection = -servoDirection;
+      servoAngle = (servoAngle > 0 ? 1 : -1) * SERVOMOTOR_ROTATE_ANGLE;
     }
 
     servomotor.setValue(servoAngle);
-
+    delay(10);
     distance = ultrasonic.getDistance();
   }
-  
-  motorLeft.set(forward, 0);
-  motorRight.set(forward, 0);
+}
 
-  // Turn around the bottle
-
+void Robot::bypassBottles() {
   servomotor.setValue(-90);
   turn(45);
-  motorLeft.set(forward, 255);
-  motorRight.set(forward, 255);
-  
+  goForward();
+
   // Go forward until we see the bottle
-  while(ultrasonic.getDistance() > 30.0f);
+  while(ultrasonic.getDistance() > MAX_BOTTLE_DISTANCE);
 
   // Continue until we pass the bottle (and a bit more)
-  while(ultrasonic.getDistance() < 30.0f);
+  while(ultrasonic.getDistance() < MAX_BOTTLE_DISTANCE);
   delay(750);
 
   for(int i = 0; i < 4; i++) {
-    servomotor.setValue((i%2?-1:1)*90);
-    turn((i%2?1:-1)*90);
-    motorLeft.set(forward, 255);
-    motorRight.set(forward, 255);
+    servomotor.setValue((i % 2 ? -1 : 1) * 90);
+    turn((i % 2 ? 1 : -1) * 90);
+    goForward();
     
     // Go forward until we see the bottle
-    while(ultrasonic.getDistance() > 30.0f);
+    while(ultrasonic.getDistance() > MAX_BOTTLE_DISTANCE);
 
     // Continue until we pass the bottle (and a bit more)
-    while(ultrasonic.getDistance() < 30.0f);
+    while(ultrasonic.getDistance() < MAX_BOTTLE_DISTANCE);
     delay(750);
   }
+}
 
-  // Stop
-  motorLeft.set(forward, 0);
-  motorRight.set(forward, 0);
+void Robot::goForward() {
+  motorLeft.set(forward, 255);
+  motorRight.set(forward, 255);
+}
+
+void Robot::goBackward() {
+  motorLeft.set(backward, 255);
+  motorRight.set(backward, 255);
+}
+
+void Robot::stop() {
+  motorLeft.setSpeed(0);
+  motorRight.setSpeed(0);
 }
 
 void Robot::turn(int adeg) {
   // Convert adeg from deg to rad
-  float turnAngle = PI * adeg / 180.0f;
+  float turnAngle = DEG_TO_RAD * adeg;
   
-  float l = abs(turnAngle) * TRACK / 100.0f; // (Convert to m)
-  float t = l / SPEED * 1000; // (Convert to millis)
+  float d = abs(turnAngle) * TRACK / 100.0f; // Calculate distance (to meters)
+  float t = d / SPEED * 1000; // Calculate time (to milliseconds)
 
   if(turnAngle > 0) {
     motorLeft.set(forward, 255);

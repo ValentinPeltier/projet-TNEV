@@ -15,9 +15,14 @@ public:
 	void loop();
 
 private:
+	void initValues();
+	void waitForStart();
+	void searchFirstBottle();
+	void bypassBottles();
+	void goForward();
+	void goBackward();
+	void stop();
 	void turn(int);
-	void updateButtonState();
-	bool buttonStatePressed();
 
 	// -------
 	
