@@ -127,7 +127,7 @@ void Robot::bypassBottles() {
 
   // Continue until we pass the bottle (and a bit more)
   while(ultrasonic.getDistance() < MAX_BOTTLE_DISTANCE);
-  delay(90);
+  delay(750);
 
   for(int i = 0; i < 4; i++) {
     servomotor.setValue((i % 2 ? -1 : 1) * 90);
@@ -168,10 +168,12 @@ void Robot::turn(int adeg) {
   if(turnAngle > 0) {
     motorLeft.set(forward, MOTOR_L_SPEED);
     motorRight.set(backward, MOTOR_R_SPEED);
+    t /= MOTOR_ROTATE_SHIFT;
   }
   else {
     motorLeft.set(backward, MOTOR_L_SPEED);
     motorRight.set(forward, MOTOR_R_SPEED);
+    t *= MOTOR_ROTATE_SHIFT;
   }
 
   delay(t);

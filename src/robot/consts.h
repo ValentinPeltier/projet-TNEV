@@ -3,7 +3,7 @@
 
 // Constants
 #define TRACK 15.8f
-#define SPEED 0.35f
+#define SPEED 0.2f
 #define SERVOMOTOR_ANGLE_SHIFT (-30)
 #define SERVOMOTOR_ROTATE_SPEED 2.5f
 #define SERVOMOTOR_ROTATE_ANGLE 40.0f
@@ -11,6 +11,7 @@
 #define MAX_BOTTLE_DISTANCE 30.0f
 #define MOTOR_R_SPEED 255
 #define MOTOR_L_SPEED 255
+#define MOTOR_ROTATE_SHIFT 1.03f
 
 // Pins
 #define BUTTON_PIN 2
